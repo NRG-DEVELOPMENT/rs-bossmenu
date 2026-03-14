@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rs-bossmenu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="app" class="hidden">
+        <div class="veil"></div>
+
+        <div id="bossShell" class="shell">
+            <aside class="sidebar glass">
+                <div class="brand-row">
+                    <div class="brand-icon">RS</div>
+                    <div>
+                        <div class="eyebrow">EXECUTIVE</div>
+                        <h1 id="jobTitle">Boss Menu</h1>
+                    </div>
+                </div>
+
+                <nav class="nav">
+                    <button class="nav-btn active" data-tab="overview">Overview</button>
+                    <button class="nav-btn" data-tab="employees">Employees</button>
+                    <button class="nav-btn" data-tab="hire">Recruitment</button>
+                    <button class="nav-btn" data-tab="finances">Finances</button>
+                    <button class="nav-btn" data-tab="activity">Activity</button>
+                    <button class="nav-btn" data-tab="operations">Operations</button>
+                </nav>
+
+                <div class="sidebar-card">
+                    <div class="eyebrow">CONTROL PANEL</div>
+                    <div id="providerBadge" class="provider-chip">Society Treasury</div>
+                    <p id="sidebarSubtitle">Executive management dashboard</p>
+                </div>
+
+                <div class="sidebar-footer">
+                    <button id="closeBtn" class="ghost-btn">Close Menu</button>
+                </div>
+            </aside>
+
+            <main class="content">
+                <section class="hero glass">
+                    <div>
+                        <div class="eyebrow">MANAGEMENT SUITE</div>
+                        <h2 id="heroTitle">Executive Control</h2>
+                        <p id="heroSubtitle">Run society finance, staffing, and operations from one premium control panel.</p>
+                    </div>
+                    <div class="hero-pills" id="heroPills"></div>
+                </section>
+
+                <section id="tab-overview" class="tab active">
+                    <div class="stats-grid">
+                        <article class="stat-card glass accent-a">
+                            <span>Society Balance</span>
+                            <strong id="statBalance">$0</strong>
+                            <small>Live society funds</small>
+                        </article>
+                        <article class="stat-card glass accent-b">
+                            <span>Total Employees</span>
+                            <strong id="statEmployees">0</strong>
+                            <small>Current roster size</small>
+                        </article>
+                        <article class="stat-card glass accent-c">
+                            <span>Online Staff</span>
+                            <strong id="statOnline">0</strong>
+                            <small>Active right now</small>
+                        </article>
+                    </div>
+
+                    <div class="split-grid">
+                        <article class="panel glass">
+                            <div class="panel-head">
+                                <div>
+                                    <div class="eyebrow">QUICK TRANSFER</div>
+                                    <h3>Finance Actions</h3>
+                                </div>
+                            </div>
+                            <div class="quick-grid" id="quickGrid"></div>
+                            <div class="quick-inline">
+                                <input id="quickAmount" type="number" min="1" placeholder="Custom amount" />
+                                <button class="primary-btn" id="quickDepositBtn">Deposit</button>
+                                <button class="secondary-btn" id="quickWithdrawBtn">Withdraw</button>
+                            </div>
+                        </article>
+
+                        <article class="panel glass">
+                            <div class="panel-head">
+                                <div>
+                                    <div class="eyebrow">LIVE FEED</div>
+                                    <h3>Recent Activity</h3>
+                                </div>
+                            </div>
+                            <div id="activityPreview" class="stack compact"></div>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="tab-employees" class="tab">
+                    <div class="panel glass fill">
+                        <div class="panel-head row-gap">
+                            <div>
+                                <div class="eyebrow">ROSTER</div>
+                                <h3>Employee Management</h3>
+                            </div>
+                            <div class="toolbar">
+                                <input id="employeeSearch" type="text" placeholder="Search employee or grade" />
+                                <select id="employeeSort">
+                                    <option value="default">Default</option>
+                                    <option value="name">Name</option>
+                                    <option value="grade">Highest Grade</option>
+                                    <option value="online">Online First</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="employeeList" class="employee-grid"></div>
+                    </div>
+                </section>
+
+                <section id="tab-hire" class="tab">
+                    <div class="panel glass fill">
+                        <div class="panel-head">
+                            <div>
+                                <div class="eyebrow">RECRUITMENT</div>
+                                <h3>Nearby Players</h3>
+                            </div>
+                            <button id="refreshNearbyBtn" class="ghost-inline">Refresh</button>
+                        </div>
+                        <div id="nearbyList" class="stack"></div>
+                    </div>
+                </section>
+
+                <section id="tab-finances" class="tab">
+                    <div class="finance-layout stacked">
+                        <article class="panel glass finance-chart-panel finance-main-panel">
+                            <div class="panel-head finance-head">
+                                <div>
+                                    <div class="eyebrow">SOCIETY TREND</div>
+                                    <h3>Recent Balance Changes</h3>
+                                </div>
+                                <div id="financeNet" class="provider-chip">No data</div>
+                            </div>
+                            <div class="chart-wrap">
+                                <svg id="financeChart" viewBox="0 0 820 260" preserveAspectRatio="none"></svg>
+                                <div id="financeLegend" class="chart-legend"></div>
+                            </div>
+                            <div class="finance-actions-grid">
+                                <article class="finance-action-card">
+                                    <div class="eyebrow">DEPOSIT</div>
+                                    <h3>Move Cash Into Society</h3>
+                                    <div class="finance-form">
+                                        <input id="depositAmount" type="number" min="1" placeholder="Amount" />
+                                        <button id="depositBtn" class="primary-btn">Confirm Deposit</button>
+                                    </div>
+                                </article>
+                                <article class="finance-action-card">
+                                    <div class="eyebrow">WITHDRAW</div>
+                                    <h3>Move Cash Out Of Society</h3>
+                                    <div class="finance-form">
+                                        <input id="withdrawAmount" type="number" min="1" placeholder="Amount" />
+                                        <button id="withdrawBtn" class="secondary-btn">Confirm Withdraw</button>
+                                    </div>
+                                </article>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="tab-activity" class="tab">
+                    <div class="panel glass fill">
+                        <div class="panel-head">
+                            <div>
+                                <div class="eyebrow">AUDIT</div>
+                                <h3>Society Activity Log</h3>
+                            </div>
+                        </div>
+                        <div id="activityList" class="stack"></div>
+                    </div>
+                </section>
+
+                <section id="tab-operations" class="tab">
+                    <div class="operations-grid">
+                        <article class="panel glass op-panel">
+                            <div class="op-top">
+                                <div class="op-icon">▣</div>
+                                <div>
+                                    <div class="eyebrow">STORAGE</div>
+                                    <h3>Society Stash</h3>
+                                </div>
+                            </div>
+                            <p class="op-copy">Open the shared society stash.</p>
+                            <button id="stashBtn" class="primary-btn full-btn">Open Stash</button>
+                        </article>
+                        <article class="panel glass op-panel">
+                            <div class="op-top">
+                                <div class="op-icon">◈</div>
+                                <div>
+                                    <div class="eyebrow">OUTFITS</div>
+                                    <h3>Wardrobe</h3>
+                                </div>
+                            </div>
+                            <p class="op-copy">Access saved outfits and department appearance options.</p>
+                            <button id="wardrobeBtn" class="secondary-btn full-btn">Open Wardrobe</button>
+                        </article>
+                        <article class="panel glass op-panel">
+                            <div class="op-top">
+                                <div class="op-icon">◎</div>
+                                <div>
+                                    <div class="eyebrow">STATUS</div>
+                                    <h3>Duty Control</h3>
+                                </div>
+                            </div>
+                            <p id="dutyMeta" class="op-copy">Toggle your duty state directly from the boss panel.</p>
+                            <button id="dutyBtn" class="ghost-btn full-btn">Toggle Duty</button>
+                        </article>
+                    </div>
+                    <article class="panel glass duty-panel">
+                        <div class="panel-head">
+                            <div><div class="eyebrow">TIME TRACKING</div><h3>Duty Hours</h3></div>
+                        </div>
+                        <div id="dutyOverview" class="stack"></div>
+                    </article>
+                </section>
+            </main>
+
+            <div id="actionModal" class="modal-shell">
+                <div id="modalBackdrop" class="modal-backdrop"></div>
+                <div class="modal-card glass">
+                    <div class="panel-head modal-head">
+                        <div>
+                            <div class="eyebrow">EMPLOYEE ACTION</div>
+                            <h3 id="modalTitle">Action</h3>
+                            <p id="modalSubtitle" class="subtle"></p>
+                        </div>
+                    </div>
+                    <div id="modalBody"></div>
+                    <div class="modal-actions">
+                        <button id="modalCancel" class="ghost-btn">Cancel</button>
+                        <button id="modalConfirm" class="primary-btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="dutyShell" class="duty-shell hidden">
+            <div class="duty-card glass clean-duty-card">
+                <div class="duty-head duty-head-clean">
+                    <div>
+                        <div class="eyebrow">DUTY CONTROL</div>
+                        <h2 id="dutyJobTitle">Duty Time Sheet</h2>
+                        <p id="dutyStatusText" class="subtle">Clock in when you start your shift.</p>
+                    </div>
+                    <div id="dutyStatusBadge" class="provider-chip">Off Duty</div>
+                </div>
+
+                <div class="duty-focus-panel glass">
+                    <div class="duty-focus-copy">
+                        <span class="eyebrow">SHIFT STATUS</span>
+                        <h3>Clock In / Out</h3>
+                        <p>Use the main button below to toggle your duty state.</p>
+                    </div>
+                    <button id="dutyToggleBtn" class="primary-btn duty-main-toggle">Go On Duty</button>
+                </div>
+
+                <div class="duty-stats-grid clean-duty-stats">
+                    <article class="stat-card glass accent-a">
+                        <span>Total Time</span>
+                        <strong id="dutyTotal">0m</strong>
+                        <small>All tracked sessions</small>
+                    </article>
+                    <article class="stat-card glass accent-b">
+                        <span>Current Shift</span>
+                        <strong id="dutyCurrent">0m</strong>
+                        <small>Live shift timer</small>
+                    </article>
+                </div>
+
+                <article class="panel glass fill duty-history-panel clean-duty-history">
+                    <div class="panel-head">
+                        <div>
+                            <div class="eyebrow">WEEKLY TRACKING</div>
+                            <h3>This Week</h3>
+                        </div>
+                    </div>
+                    <div id="dutyDays" class="duty-days-list"></div>
+                </article>
+
+                <div class="duty-actions clean-duty-actions">
+                    <button id="dutyCloseBtn" class="ghost-btn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
