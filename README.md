@@ -51,4 +51,5 @@ exports['rs-bossmenu']:OpenBossMenu('police')
 
 ## Notes
 
-Inventory support is intentionally limited to ox_inventory and qb-inventory.
+Any issues with the script Join the discord and open a ticket
+https://discord.gg/xkS7PtGN2W
