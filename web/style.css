@@ -355,7 +355,8 @@ input:focus, select:focus { border-color: rgba(147,194,255,.36); }
 .op-top { align-items: center; }
 .op-icon { width: 48px; height: 48px; font-size: 20px; }
 .full-btn { margin-top: auto; width: 100%; }
-.duty-panel { height: calc(100% - 212px); }
+.duty-panel { height: calc(100% - 212px); display: flex; flex-direction: column; }
+.duty-panel #dutyOverview { flex: 1 1 auto; min-height: 0; overflow: auto; }
 .compact-duty-card { min-height: 66px; }
 .modal-shell {
     position: absolute;
@@ -375,6 +376,11 @@ input:focus, select:focus { border-color: rgba(147,194,255,.36); }
     width: min(460px, 92vw);
     padding: 22px;
     z-index: 1;
+    background: linear-gradient(180deg, #071426 0%, #040c1c 60%, #020810 100%);
+    border: 1px solid rgba(120, 170, 255, 0.18);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.03),
+        0 32px 100px rgba(0,0,0,0.75);
 }
 .modal-form {
     display: grid;
@@ -511,7 +517,7 @@ input:focus, select:focus { border-color: rgba(147,194,255,.36); }
 .finance-chart-panel { height: 100%; }
 .duty-shell { max-height: 88vh; }
 .duty-card { display: flex; flex-direction: column; max-height: 88vh; overflow: hidden; }
-.duty-history-panel { flex: 1 1 auto; overflow: hidden; }
+.duty-history-panel { flex: 1 1 auto; overflow: hidden; display: flex; flex-direction: column; }
 #dutyDays { overflow: auto; padding-right: .2rem; }
 .duty-actions { justify-content: flex-end; margin-top: 18px; }
 #dutyToggleBtn { display: none; }
@@ -555,6 +561,10 @@ input:focus, select:focus { border-color: rgba(147,194,255,.36); }
 
 .clean-duty-history {
     padding: 18px;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .duty-days-list {
@@ -562,6 +572,8 @@ input:focus, select:focus { border-color: rgba(147,194,255,.36); }
     gap: 12px;
     overflow: auto;
     padding-right: 4px;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .weekday-row {
