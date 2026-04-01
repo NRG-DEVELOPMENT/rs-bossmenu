@@ -695,3 +695,5 @@ body,
 .veil {
     background: transparent !important;
 }
+.finance-summary-grid { margin-bottom: 18px; }
+.compact-stat { min-height: 0; }

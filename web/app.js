@@ -27,9 +27,10 @@ const dom = {
   stashBtn: document.getElementById('stashBtn'),
   wardrobeBtn: document.getElementById('wardrobeBtn'),
   dutyBtn: document.getElementById('dutyBtn'),
-  financeChart: document.getElementById('financeChart'),
-  financeLegend: document.getElementById('financeLegend'),
   financeNet: document.getElementById('financeNet'),
+  financeBalanceCard: document.getElementById('financeBalanceCard'),
+  financeEmployeesCard: document.getElementById('financeEmployeesCard'),
+  financeOnlineCard: document.getElementById('financeOnlineCard'),
   modal: document.getElementById('actionModal'),
   modalTitle: document.getElementById('modalTitle'),
   modalSubtitle: document.getElementById('modalSubtitle'),
@@ -215,69 +216,19 @@ function renderDutyOverview() {
 
 function renderOperations() {
   const ops = state.operations || {}
-  dom.dutyMeta.textContent = ops.duty
-    ? `Current status: ${ops.onDuty ? 'On Duty' : 'Off Duty'}`
-    : 'Duty control is unavailable on this framework.'
+  dom.dutyMeta.textContent = 'Review employee hours and weekly time tracking.'
 
   dom.stashBtn.disabled = !ops.stash
   dom.wardrobeBtn.disabled = !ops.wardrobe
-  dom.dutyBtn.disabled = !ops.duty
-  dom.dutyBtn.textContent = ops.duty ? (ops.onDuty ? 'Go Off Duty' : 'Go On Duty') : 'Duty Unavailable'
+  dom.dutyBtn.disabled = false
+  dom.dutyBtn.textContent = 'View Timesheets'
 }
 
 function renderFinanceChart() {
-  const points = Array.isArray(state.financeHistory) ? state.financeHistory : []
-  const svg = dom.financeChart
-  if (!svg) return
-
-  if (!points.length) {
-    svg.innerHTML = ''
-    dom.financeLegend.innerHTML = '<span class="subtle">No finance data yet.</span>'
-    dom.financeNet.textContent = 'No data'
-    return
-  }
-
-  const width = 820
-  const height = 260
-  const padX = 26
-  const topPad = 26
-  const bottomPad = 40
-  const values = points.map(p => Number(p.amount || 0))
-  const peak = Math.max(...values.map(v => Math.abs(v)), 1)
-  const zeroY = topPad + ((height - topPad - bottomPad) * (peak / (peak * 2)))
-  const step = points.length > 1 ? (width - padX * 2) / (points.length - 1) : 0
-  const coords = points.map((point, index) => {
-    const x = padX + (step * index)
-    const normalized = (Number(point.amount || 0) / (peak * 2))
-    const y = zeroY - normalized * (height - topPad - bottomPad)
-    return { x, y, label: point.label || 'Now', amount: Number(point.amount || 0) }
-  })
-
-  const polyline = coords.map(point => `${point.x},${point.y}`).join(' ')
-  const area = `${padX},${height - bottomPad} ${polyline} ${coords[coords.length - 1].x},${height - bottomPad}`
-  const net = values.reduce((sum, value) => sum + value, 0)
-  dom.financeNet.textContent = `${net >= 0 ? '+' : '-'}${fmtMoney(Math.abs(net))}`
-
-  svg.innerHTML = `
-    <defs>
-      <linearGradient id="financeFill" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stop-color="rgba(120,169,255,0.38)"></stop>
-        <stop offset="100%" stop-color="rgba(98,237,255,0.04)"></stop>
-      </linearGradient>
-    </defs>
-    <line x1="${padX}" y1="${zeroY}" x2="${width - padX}" y2="${zeroY}" class="chart-zero"></line>
-    <polygon points="${area}" fill="url(#financeFill)"></polygon>
-    <polyline points="${polyline}" class="chart-line"></polyline>
-    ${coords.map(point => `<circle cx="${point.x}" cy="${point.y}" r="5" class="chart-point"></circle>`).join('')}
-    ${coords.map(point => `<text x="${point.x}" y="${height - 12}" text-anchor="middle" class="chart-label">${point.label}</text>`).join('')}
-  `
-
-  dom.financeLegend.innerHTML = coords.slice(-4).map(point => `
-    <div class="legend-card">
-      <span>${point.label}</span>
-      <strong class="${point.amount >= 0 ? 'pos' : 'neg'}">${point.amount >= 0 ? '+' : '-'}${fmtMoney(Math.abs(point.amount))}</strong>
-    </div>
-  `).join('')
+  if (dom.financeNet) dom.financeNet.textContent = 'Treasury'
+  if (dom.financeBalanceCard) dom.financeBalanceCard.textContent = fmtMoney(state.balance)
+  if (dom.financeEmployeesCard) dom.financeEmployeesCard.textContent = String(state.employeeCount || 0)
+  if (dom.financeOnlineCard) dom.financeOnlineCard.textContent = String(state.onlineCount || 0)
 }
 
 function render(data) {
@@ -447,7 +398,7 @@ document.getElementById('quickWithdrawBtn').addEventListener('click', () => post
 document.getElementById('refreshNearbyBtn').addEventListener('click', () => post('action', { action: 'refresh', job: state.job }))
 dom.stashBtn.addEventListener('click', () => post('action', { action: 'stash', job: state.job }))
 dom.wardrobeBtn.addEventListener('click', () => post('action', { action: 'wardrobe', job: state.job }))
-dom.dutyBtn.addEventListener('click', () => post('action', { action: 'duty', job: state.job }))
+dom.dutyBtn.addEventListener('click', () => showTab('timesheets'))
 document.getElementById('modalCancel').addEventListener('click', () => closeModal())
 dom.modalConfirm.addEventListener('click', async () => {
   if (!modalState?.onConfirm) return

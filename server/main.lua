@@ -247,6 +247,9 @@ local function getAccountCandidates(jobName, provider)
     elseif provider == 'qb-banking' then
         add(jobName)
         add(('society_%s'):format(jobName))
+    elseif provider == 'okokbanking' then
+        add(jobName)
+        add(('society_%s'):format(jobName))
     else
         add(jobName)
     end
@@ -260,6 +263,7 @@ local function detectSocietyProvider()
         return preferred
     end
     if GetResourceState('Renewed-Banking') == 'started' then return 'renewed-banking' end
+    if GetResourceState('okokBanking') == 'started' then return 'okokbanking' end
     if Framework == 'qb' and GetResourceState('qb-management') == 'started' then return 'qb-management' end
     if Framework == 'qb' and GetResourceState('qb-banking') == 'started' then return 'qb-banking' end
     if Framework == 'esx' and GetResourceState('esx_addonaccount') == 'started' then return 'esx_addonaccount' end
@@ -400,10 +404,53 @@ local function removeRenewedBalance(jobName, amount)
     return nil
 end
 
+
+local function getOkokBalance(jobName)
+    for _, accountName in ipairs(getAccountCandidates(jobName, 'okokbanking')) do
+        local ok, value = pcall(function()
+            return exports['okokBanking']:GetAccount(accountName)
+        end)
+        if ok and value ~= nil and value ~= false then
+            if type(value) == 'table' then
+                return tonumber(value.balance or value.money or value.amount or 0) or 0
+            end
+            return tonumber(value or 0) or 0
+        end
+    end
+    return nil
+end
+
+local function addOkokBalance(jobName, amount)
+    for _, accountName in ipairs(getAccountCandidates(jobName, 'okokbanking')) do
+        local ok, value = pcall(function()
+            return exports['okokBanking']:AddMoney(accountName, amount)
+        end)
+        if ok then
+            return value ~= false
+        end
+    end
+    return nil
+end
+
+local function removeOkokBalance(jobName, amount)
+    for _, accountName in ipairs(getAccountCandidates(jobName, 'okokbanking')) do
+        local ok, value = pcall(function()
+            return exports['okokBanking']:RemoveMoney(accountName, amount)
+        end)
+        if ok then
+            return value ~= false
+        end
+    end
+    return nil
+end
+
 local function getSocietyMoney(jobName)
     local provider = detectSocietyProvider()
     if provider == 'renewed-banking' and GetResourceState('Renewed-Banking') == 'started' then
         local amount = getRenewedBalance(jobName)
+        if amount ~= nil then return amount, provider end
+    elseif provider == 'okokbanking' and GetResourceState('okokBanking') == 'started' then
+        local amount = getOkokBalance(jobName)
         if amount ~= nil then return amount, provider end
     elseif provider == 'qb-management' and GetResourceState('qb-management') == 'started' then
         local ok, value = pcall(function() return exports['qb-management']:GetAccount(jobName) end)
@@ -435,6 +482,9 @@ local function addSocietyMoney(jobName, amount)
     if provider == 'renewed-banking' and GetResourceState('Renewed-Banking') == 'started' then
         local ok = addRenewedBalance(jobName, amount)
         if ok ~= nil then return ok end
+    elseif provider == 'okokbanking' and GetResourceState('okokBanking') == 'started' then
+        local ok = addOkokBalance(jobName, amount)
+        if ok ~= nil then return ok end
     elseif provider == 'qb-management' and GetResourceState('qb-management') == 'started' then
         local ok = pcall(function() exports['qb-management']:AddMoney(jobName, amount) end)
         if ok then return true end
@@ -463,6 +513,9 @@ local function removeSocietyMoney(jobName, amount)
     local provider = detectSocietyProvider()
     if provider == 'renewed-banking' and GetResourceState('Renewed-Banking') == 'started' then
         local ok = removeRenewedBalance(jobName, amount)
+        if ok ~= nil then return ok end
+    elseif provider == 'okokbanking' and GetResourceState('okokBanking') == 'started' then
+        local ok = removeOkokBalance(jobName, amount)
         if ok ~= nil then return ok end
     elseif provider == 'qb-management' and GetResourceState('qb-management') == 'started' then
         local ok = pcall(function() exports['qb-management']:RemoveMoney(jobName, amount) end)
@@ -858,7 +911,9 @@ local function getOverview(src, jobName)
             stash = Config.Inventory and Config.Inventory.stashes and Config.Inventory.stashes.enabled,
             wardrobe = Config.Wardrobe and Config.Wardrobe.enabled,
             duty = Framework == 'qb',
-            onDuty = onDuty
+            onDuty = onDuty,
+            dutyCommand = Config.UseDutyCommand == true,
+            dutyCommandName = Config.DutyCommand or 'duty'
         },
         dutyOverview = getDutyOverview(jobName),
         settings = {

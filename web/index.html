@@ -28,6 +28,7 @@
                     <button class="nav-btn" data-tab="employees">Employees</button>
                     <button class="nav-btn" data-tab="hire">Recruitment</button>
                     <button class="nav-btn" data-tab="finances">Finances</button>
+                    <button class="nav-btn" data-tab="timesheets">Timesheets</button>
                     <button class="nav-btn" data-tab="activity">Activity</button>
                     <button class="nav-btn" data-tab="operations">Operations</button>
                 </nav>
@@ -139,14 +140,24 @@
                         <article class="panel glass finance-chart-panel finance-main-panel">
                             <div class="panel-head finance-head">
                                 <div>
-                                    <div class="eyebrow">SOCIETY TREND</div>
-                                    <h3>Recent Balance Changes</h3>
+                                    <div class="eyebrow">SOCIETY FINANCE</div>
+                                    <h3>Balance Actions</h3>
                                 </div>
-                                <div id="financeNet" class="provider-chip">No data</div>
+                                <div id="financeNet" class="provider-chip">Treasury</div>
                             </div>
-                            <div class="chart-wrap">
-                                <svg id="financeChart" viewBox="0 0 820 260" preserveAspectRatio="none"></svg>
-                                <div id="financeLegend" class="chart-legend"></div>
+                            <div class="stats-grid finance-summary-grid">
+                                <article class="stat-card compact-stat">
+                                    <span class="eyebrow">CURRENT BALANCE</span>
+                                    <strong id="financeBalanceCard">$0</strong>
+                                </article>
+                                <article class="stat-card compact-stat">
+                                    <span class="eyebrow">EMPLOYEES</span>
+                                    <strong id="financeEmployeesCard">0</strong>
+                                </article>
+                                <article class="stat-card compact-stat">
+                                    <span class="eyebrow">ONLINE STAFF</span>
+                                    <strong id="financeOnlineCard">0</strong>
+                                </article>
                             </div>
                             <div class="finance-actions-grid">
                                 <article class="finance-action-card">
@@ -167,6 +178,20 @@
                                 </article>
                             </div>
                         </article>
+                    </div>
+                </section>
+
+
+                <section id="tab-timesheets" class="tab">
+                    <div class="panel glass fill duty-history-panel">
+                        <div class="panel-head">
+                            <div>
+                                <div class="eyebrow">TIME TRACKING</div>
+                                <h3>Employee Timesheets</h3>
+                                <p class="subtle">Review total hours, current shift time, and weekly breakdown for every employee.</p>
+                            </div>
+                        </div>
+                        <div id="dutyOverview" class="stack"></div>
                     </div>
                 </section>
 
@@ -214,16 +239,10 @@
                                     <h3>Duty Control</h3>
                                 </div>
                             </div>
-                            <p id="dutyMeta" class="op-copy">Toggle your duty state directly from the boss panel.</p>
-                            <button id="dutyBtn" class="ghost-btn full-btn">Toggle Duty</button>
+                            <p id="dutyMeta" class="op-copy">Open the full employee timesheets page.</p>
+                            <button id="dutyBtn" class="ghost-btn full-btn">View Timesheets</button>
                         </article>
                     </div>
-                    <article class="panel glass duty-panel">
-                        <div class="panel-head">
-                            <div><div class="eyebrow">TIME TRACKING</div><h3>Duty Hours</h3></div>
-                        </div>
-                        <div id="dutyOverview" class="stack"></div>
-                    </article>
                 </section>
             </main>
 

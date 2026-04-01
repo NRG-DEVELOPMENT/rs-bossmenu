@@ -5,7 +5,7 @@ lua54 'yes'
 name 'rs-bossmenu'
 author 'NRG development'
 description 'Premium boss menu with modern NUI, society banking, employee management, and job utilities'
-version '1.0.1'
+version '1.0.2'
 
 ui_page 'web/index.html'
 

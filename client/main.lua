@@ -257,6 +257,24 @@ if Config.UseCommand then
     RegisterKeyMapping(Config.OpenBossMenuCommand, 'Open Boss Menu', 'keyboard', Config.OpenBossMenuKey or 'F6')
 end
 
+if Config.UseTimeSheetCommand then
+    RegisterCommand(Config.TimeSheetCommand or 'timesheet', function()
+        local jobName = getJobName()
+        if not jobName then return end
+        local dutyData = lib.callback.await(Prefix .. ':server:getDutyPointData', false, jobName)
+        if dutyData and dutyData.ok then
+            CurrentJob = dutyData.job
+            IsOpen = false
+            DutyUiOpen = true
+            SetNuiFocus(true, true)
+            SetNuiFocusKeepInput(false)
+            SendNUIMessage({ action = 'openDuty', data = dutyData })
+            return
+        end
+        notify((dutyData and dutyData.message) or 'Unable to load duty data.', 'error')
+    end, false)
+end
+
 exports('OpenBossMenu', function(jobName)
     openMenu(jobName)
     return true
@@ -321,10 +339,21 @@ RegisterNUICallback('action', function(data, cb)
             if dutyData and dutyData.ok then
                 SendNUIMessage({ action = 'openDuty', data = dutyData })
             end
-        else
-            closeMenu(true)
         end
         cb({ ok = true })
+        return
+    elseif action == 'viewDuty' then
+        local dutyData = lib.callback.await(Prefix .. ':server:getDutyPointData', false, CurrentJob or data.job)
+        if dutyData and dutyData.ok then
+            CurrentJob = dutyData.job
+            IsOpen = false
+            DutyUiOpen = true
+            SendNUIMessage({ action = 'openDuty', data = dutyData })
+            cb({ ok = true })
+            return
+        end
+        notify((dutyData and dutyData.message) or 'Unable to load duty data.', 'error')
+        cb({ ok = false })
         return
     end
 
